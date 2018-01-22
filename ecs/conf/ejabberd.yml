@@ -94,7 +94,7 @@ log_rate_limit: 100
 ##   - "example.org"
 ##
 hosts:
-  - "localhost"
+  - "kancolle.chat"
 
 ##
 ## route_subdomains: Delegate subdomains to other XMPP servers.
@@ -183,6 +183,25 @@ listen:
     web_admin: true
     ## register: true
     captcha: false
+  -
+    module: ejabberd_http
+    port: 8443
+    # tls: true
+    # For ejabberd < 17.12 only
+    # certfile: "/etc/ejabberd/certificate.pem"
+    # dhfile: "/etc/ejabberd/dh-parameters.pem"
+    # ciphers: "ECDH:DH:!MEDIUM:!3DES:!aNULL:!eNULL@STRENGTH"
+    # protocol_options:
+    #  - "no_sslv3"
+    #  - "cipher_server_preference"
+    #  - "no_compression"
+    request_handlers:
+      "upload": mod_http_upload
+    custom_headers:
+      "Access-Control-Allow-Origin": "*"
+      "Access-Control-Allow-Methods": "OPTIONS, HEAD, GET, PUT"
+      "Access-Control-Allow-Headers": "Authorization"
+      "Access-Control-Allow-Credentials": "true"
   ##
   ## ejabberd_service: Interact with external components (transports, ...)
   ##
@@ -700,6 +719,15 @@ acme:
 ## Modules enabled in all ejabberd virtual hosts.
 ##
 modules:
+  mod_http_upload:
+    name: "HTTP File Upload"
+    access: local
+    max_size: 104857600 # 100 MiB.
+    file_mode: "0640"
+    dir_mode: "2750"
+    docroot: "/var/www/upload/@HOST@"
+    put_url: "https://@HOST@:8443/upload"
+    thumbnail: false
   mod_adhoc: {}
   mod_admin_extra: {}
   mod_announce: # recommends mod_adhoc
