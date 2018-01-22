@@ -72,7 +72,7 @@ ADD --chown=ejabberd:ejabberd https://curl.haxx.se/ca/cacert.pem conf/cacert.pem
 # Setup runtime environment
 USER ejabberd
 VOLUME ["$HOME/database","$HOME/conf","$HOME/logs"]
-EXPOSE 5222 5269 5280
+EXPOSE 5222 5269 5280 8443
 
 ENTRYPOINT ["/home/ejabberd/bin/ejabberdctl"]
 CMD ["foreground"]
